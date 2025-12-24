@@ -57,19 +57,23 @@ const Page = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-4"
       >
-        <Input {...register("name")} placeholder="Enter name" type="text" />
+        <Input
+          {...register("name")}
+          placeholder="Enter your bar name"
+          type="text"
+        />
         {errors.name && (
-          <p className="mt-1 text-xs text-red-500 font-medium">
+          <p className="mt-1 text-xs text-left text-red-500 font-medium">
             {errors.name.message}
           </p>
         )}
         <Input
           {...register("email")}
           placeholder="you@example.com"
-          type="email"
+          type="text"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-500 font-medium">
+          <p className="mt-1 text-xs text-left text-red-500 font-medium">
             {errors.email.message}
           </p>
         )}
@@ -79,7 +83,7 @@ const Page = () => {
           type="password"
         />
         {errors.password && (
-          <p className="mt-1 text-xs text-red-500 font-medium">
+          <p className="mt-1 text-xs text-left text-red-500 font-medium">
             {errors.password.message}
           </p>
         )}

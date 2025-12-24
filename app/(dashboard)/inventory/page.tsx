@@ -5,9 +5,13 @@ import TableSkeleton from "@/components/TableSkeleton";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Inventory } from "@/generated/prisma/client";
-import { getInventoryItems } from "@/lib/actions/inventory";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import {
+  deleteInventoryItem,
+  getInventoryItems,
+} from "@/lib/actions/inventory";
+import { ChevronLeft, ChevronRight, Edit3, Plus, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Page = () => {
   const [items, setItems] = useState<Inventory[]>([]);
@@ -53,6 +57,50 @@ const Page = () => {
   const endRange = Math.min(currentPage * pageSize, totalItems);
   const totalPages = Math.ceil(totalItems / pageSize);
 
+  // 1. Add these states to your Page component
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // 2. The trigger function
+  const openDeleteConfirm = (id: string, name: string) => {
+    setItemToDelete({ id, name });
+    setIsDeleteModalOpen(true);
+  };
+
+  // 3. The execution function
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
+
+    setIsDeleting(true);
+    const res = await deleteInventoryItem(itemToDelete.id);
+
+    if (res.success) {
+      toast.success(`${res.item?.name} deleted successfully.`);
+      setIsDeleteModalOpen(false);
+      fetchItems(); // Refresh the table
+    } else {
+      alert("Error deleting item");
+    }
+    setIsDeleting(false);
+  };
+
+  const [editingItem, setEditingItem] = useState<Inventory | null>(null);
+
+  // 2. Open edit function
+  const handleEditClick = (item: Inventory) => {
+    setEditingItem(item);
+    setOpenModal(true);
+  };
+
+  // 3. Close handler (Reset the editing state)
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setEditingItem(null);
+  };
   return (
     <div>
       <div className="flex items-center gap-4">
@@ -94,10 +142,13 @@ const Page = () => {
                 <th className="text-xs font-medium tracking-wider text-secondary whitespace-nowrap pb-4">
                   Status
                 </th>
+                <th className="text-xs font-medium tracking-wider text-secondary whitespace-nowrap pb-4 text-end">
+                  Action
+                </th>
               </tr>
             </thead>
             {isLoading ? (
-              <TableSkeleton col={6} />
+              <TableSkeleton col={7} />
             ) : items.length > 0 ? (
               <tbody>
                 {items.map((item) => (
@@ -126,6 +177,22 @@ const Page = () => {
                       >
                         {item.status.toUpperCase()}
                       </span>
+                    </td>
+                    <td className="py-4 pl-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEditClick(item)}
+                          className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"
+                        >
+                          <Edit3 className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => openDeleteConfirm(item.id, item.name)}
+                          className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -177,11 +244,95 @@ const Page = () => {
 
       <AddInventoryModal
         isOpen={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={() => {
+          setOpenModal(false);
+          handleCloseModal();
+        }}
         refetch={fetchItems}
+        initialData={editingItem}
+      />
+
+      <DeleteConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        itemName={itemToDelete?.name || ""}
+        isLoading={isDeleting}
       />
     </div>
   );
 };
 
 export default Page;
+
+import { AlertTriangle, Loader2 } from "lucide-react";
+
+interface DeleteConfirmModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  itemName: string;
+  isLoading?: boolean;
+}
+
+const DeleteConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  itemName,
+  isLoading,
+}: DeleteConfirmModalProps) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+      />
+
+      {/* Modal Content */}
+      <div className="relative w-full max-w-md scale-100 bg-white p-8 shadow-2xl rounded-3xl animate-in zoom-in-95 duration-200">
+        <div className="flex flex-col items-center text-center">
+          {/* Warning Icon */}
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
+            <AlertTriangle className="size-8" />
+          </div>
+
+          <h3 className="mb-2 text-xl font-semibold text-main">Delete Item?</h3>
+          <p className="mb-8 text-sm text-secondary leading-relaxed">
+            Are you sure you want to delete{" "}
+            <span className="font-bold text-main">&quot;{itemName}&quot;</span>?
+            This action cannot be undone and will remove the item from your
+            inventory records.
+          </p>
+
+          <div className="flex w-full flex-col gap-3 sm:flex-row">
+            <Button
+              className="flex-1 bg-gray-100 text-secondary hover:bg-gray-200 border-none"
+              onClick={onClose}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-200 flex items-center justify-center gap-2"
+              onClick={onConfirm}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete Item"
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

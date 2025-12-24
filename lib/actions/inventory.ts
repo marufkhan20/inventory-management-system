@@ -94,3 +94,52 @@ export async function createInventoryItem(values: InventoryInput) {
     return { error: "Something went wrong in the database." };
   }
 }
+
+// UPDATE ACTION
+export async function updateInventoryItem(id: string, values: InventoryInput) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const validatedFields = InventorySchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Invalid fields!" };
+  }
+
+  const { name, category, inStock, price, minStock } = validatedFields.data;
+
+  try {
+    await prisma.inventory.update({
+      where: { id, userId: session.user.id }, // Security: Must match user
+      data: {
+        name,
+        category,
+        inStock,
+        purchasePrice: price,
+        minStock,
+        status: inStock <= minStock ? "Low" : "OK",
+      },
+    });
+    revalidatePath("/inventory");
+    return { success: true };
+  } catch (error) {
+    console.error("error update inventory", error);
+    return { error: "Failed to update item" };
+  }
+}
+
+// DELETE ACTION
+export async function deleteInventoryItem(id: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  try {
+    const deletedItem = await prisma.inventory.delete({
+      where: { id, userId: session.user.id },
+    });
+    revalidatePath("/inventory");
+    return { success: true, item: deletedItem };
+  } catch (error) {
+    return { error: "Failed to delete item" };
+  }
+}

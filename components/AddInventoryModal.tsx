@@ -2,13 +2,18 @@
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { createInventoryItem } from "@/lib/actions/inventory"; // We will create this next
+import { Inventory } from "@/generated/prisma/client";
+import {
+  createInventoryItem,
+  updateInventoryItem,
+} from "@/lib/actions/inventory"; // We will create this next
 import {
   InventorySchema,
   type InventoryInput,
 } from "@/validation/inventorySchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, X } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -16,9 +21,17 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   refetch: () => void;
+  initialData?: Inventory | null;
 }
 
-const AddInventoryModal = ({ isOpen, onClose, refetch }: ModalProps) => {
+const AddInventoryModal = ({
+  isOpen,
+  onClose,
+  refetch,
+  initialData,
+}: ModalProps) => {
+  const isEditing = !!initialData;
+
   const {
     register,
     handleSubmit,
@@ -35,17 +48,48 @@ const AddInventoryModal = ({ isOpen, onClose, refetch }: ModalProps) => {
     },
   });
 
+  // Update form values when initialData changes or modal opens
+  useEffect(() => {
+    if (initialData && isOpen) {
+      reset({
+        name: initialData.name,
+        category: initialData.category,
+        inStock: initialData.inStock,
+        minStock: initialData.minStock,
+        price: initialData.purchasePrice,
+      });
+    } else if (!isOpen) {
+      reset({
+        inStock: 0,
+        minStock: 0,
+        category: "",
+        name: "",
+        price: "",
+      });
+    }
+  }, [initialData, isOpen, reset]);
+
   if (!isOpen) return null;
 
   const onSubmit = async (data: InventoryInput) => {
-    const result = await createInventoryItem(data);
-    if (result.success) {
-      toast.success("Inventory item created successfully.");
-      reset();
-      refetch();
-      onClose();
-    } else {
-      toast.error(result.error || "Something went wrong");
+    try {
+      const result = isEditing
+        ? await updateInventoryItem(initialData.id, data)
+        : await createInventoryItem(data);
+      if (result.success) {
+        if (isEditing) {
+          toast.success("Inventory item updated successfully.");
+        } else {
+          toast.success("Inventory item created successfully.");
+        }
+        reset();
+        refetch();
+        onClose();
+      } else {
+        toast.error(result.error || "Something went wrong");
+      }
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
@@ -150,10 +194,14 @@ const AddInventoryModal = ({ isOpen, onClose, refetch }: ModalProps) => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="font-normal px-8 bg-primary hover:bg-primary-hover text-white flex items-center gap-2"
+              className={`font-normal px-8 text-white flex items-center gap-2 ${
+                isEditing
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-primary hover:bg-primary-hover"
+              }`}
             >
               {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-              Create Item
+              {isEditing ? "Update Item" : "Create Item"}
             </Button>
           </div>
         </form>

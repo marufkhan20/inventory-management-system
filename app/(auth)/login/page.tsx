@@ -59,10 +59,10 @@ const Page = () => {
         <Input
           {...register("email")}
           placeholder="you@example.com"
-          type="email"
+          type="text"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-500 font-medium">
+          <p className="mt-1 text-xs text-left text-red-500 font-medium">
             {errors.email.message}
           </p>
         )}
@@ -72,7 +72,7 @@ const Page = () => {
           type="password"
         />
         {errors.password && (
-          <p className="mt-1 text-xs text-red-500 font-medium">
+          <p className="mt-1 text-xs text-left text-red-500 font-medium">
             {errors.password.message}
           </p>
         )}

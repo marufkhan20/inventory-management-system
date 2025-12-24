@@ -9,6 +9,7 @@ import { ReactNode, useState } from "react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { data: session, isPending } = useSession();
+  const { user } = session || {};
   const router = useRouter();
 
   const [openSidebar, setOpenSidebar] = useState(true);
@@ -41,7 +42,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <h2 className="text-2xl font-semibold">{pageName}</h2>
           </div>
           <button className="py-2 px-11 rounded-full bg-white border border-[#E5E7EB] text-sm">
-            Sunset Bar
+            {user?.name}
           </button>
         </div>
         <div className="mt-6">{children}</div>
