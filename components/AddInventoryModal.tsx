@@ -97,7 +97,9 @@ const AddInventoryModal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
         <div className="flex items-center justify-between p-6 border-b border-gray-50">
-          <h2 className="text-lg font-medium text-main">Add New Item</h2>
+          <h2 className="text-lg font-medium text-main">
+            {isEditing ? `Update Item` : "Add New Item"}
+          </h2>
           <button
             onClick={onClose}
             className="text-secondary text-primary-hover transition-colors cursor-pointer"
