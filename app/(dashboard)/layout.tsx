@@ -1,11 +1,30 @@
 "use client";
 
+import AuthLoader from "@/components/AuthLoader";
 import Sidebar from "@/components/Sidebar";
+import { useSession } from "@/lib/auth-client";
 import { Menu } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useState } from "react";
 
 const Layout = ({ children }: { children: ReactNode }) => {
+  const { data: session, isPending } = useSession();
+  const router = useRouter();
+
   const [openSidebar, setOpenSidebar] = useState(true);
+  const rawPath = usePathname().replace("/", "");
+
+  const pageName = rawPath
+    ? rawPath.charAt(0).toUpperCase() + rawPath.slice(1)
+    : "Dashboard";
+
+  if (isPending) {
+    return <AuthLoader />;
+  }
+
+  if (!session) {
+    return router.push("/login");
+  }
   return (
     <main className="flex justify-between">
       <Sidebar open={openSidebar} setOpen={setOpenSidebar} />
@@ -19,7 +38,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
               className="cursor-pointer block md:hidden text-primary-hover size-5"
               onClick={() => setOpenSidebar(true)}
             />
-            <h2 className="text-2xl font-semibold">Dashboard</h2>
+            <h2 className="text-2xl font-semibold">{pageName}</h2>
           </div>
           <button className="py-2 px-11 rounded-full bg-white border border-[#E5E7EB] text-sm">
             Sunset Bar

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { SignupData, signupSchema } from "@/validation/signupSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -82,8 +83,12 @@ const Page = () => {
             {errors.password.message}
           </p>
         )}
-        <Button disabled={isSubmitting} type="submit">
-          {isSubmitting ? "Creating..." : "Sign up"}
+        <Button
+          disabled={isSubmitting}
+          type="submit"
+          className="flex items-center justify-center gap-2"
+        >
+          {isSubmitting && <Loader2 className="size-4 animate-spin" />} Sign up
         </Button>
       </form>
       <p className="text-sm text-[#6B7280]">

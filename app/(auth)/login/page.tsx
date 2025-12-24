@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button";
 import { authClient } from "@/lib/auth-client";
 import { SigninData, signinSchema } from "@/validation/signinSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -78,8 +79,12 @@ const Page = () => {
         <Link href="/forgot-password" className="text-primary text-sm">
           Forgot password?
         </Link>
-        <Button disabled={isSubmitting} type="submit">
-          {isSubmitting ? "logged in..." : "Sign in"}
+        <Button
+          disabled={isSubmitting}
+          type="submit"
+          className="flex items-center justify-center gap-2"
+        >
+          {isSubmitting && <Loader2 className="size-4 animate-spin" />} Sign in
         </Button>
       </form>
       <p className="text-sm text-[#6B7280]">
