@@ -11,7 +11,8 @@ import prisma from "../prisma";
 
 export async function getInventoryItems(
   page: number = 1,
-  pageSize: number = 25
+  pageSize: number = 25,
+  query: string = ""
 ) {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -22,16 +23,25 @@ export async function getInventoryItems(
   try {
     const skip = (page - 1) * pageSize;
 
+    // Define the search filter
+    const searchFilter = {
+      userId: session.user.id,
+      OR: [
+        { name: { contains: query, mode: "insensitive" as const } },
+        { category: { contains: query, mode: "insensitive" as const } },
+      ],
+    };
+
     // Run both queries in parallel for better performance
     const [items, total] = await Promise.all([
       prisma.inventory.findMany({
-        where: { userId: session.user.id },
+        where: searchFilter,
         orderBy: { createdAt: "desc" },
         skip: skip,
         take: pageSize,
       }),
       prisma.inventory.count({
-        where: { userId: session.user.id },
+        where: searchFilter,
       }),
     ]);
 

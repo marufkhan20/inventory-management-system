@@ -1,6 +1,26 @@
+"use client";
+
+import TableSkeleton from "@/components/TableSkeleton";
+import { Inventory } from "@/generated/prisma/client";
+import { getInventoryItems } from "@/lib/actions/inventory";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 
 const Page = () => {
+  const [items, setItems] = useState<Inventory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const pageSize = 4;
+
+  const fetchItems = useCallback(async () => {
+    setIsLoading(true);
+    const { data } = await getInventoryItems(1, pageSize);
+    setItems(data || []);
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    (() => fetchItems())();
+  }, [fetchItems]);
   return (
     <div>
       <div className="flex gap-6 flex-wrap">
@@ -51,20 +71,40 @@ const Page = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td className="text-sm text-main pr-4 pt-4">
-                    Vodka Finlandia
-                  </td>
-                  <td className="text-sm text-main pr-4 pt-4">98</td>
-                  <td className="text-sm text-main pr-4 pt-4">20</td>
-                </tr>
-                <tr>
-                  <td className="text-sm text-main pr-4 pt-4">Rum Havana</td>
-                  <td className="text-sm text-main pr-4 pt-4">98</td>
-                  <td className="text-sm text-main pr-4 pt-4">20</td>
-                </tr>
-              </tbody>
+
+              {isLoading ? (
+                <TableSkeleton col={3} />
+              ) : items.length > 0 ? (
+                <tbody>
+                  {items.map((item) => (
+                    <tr
+                      key={item.id}
+                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="text-sm text-main pr-6 py-4">
+                        {item.name}
+                      </td>
+                      <td className="text-sm text-main pr-6 py-4">
+                        {item.inStock}
+                      </td>
+                      <td className="text-sm text-main pr-6 py-4">
+                        {item.minStock}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ) : (
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-10 text-secondary text-sm"
+                    >
+                      No items found. Add your first item!
+                    </td>
+                  </tr>
+                </tbody>
+              )}
             </table>
           </div>
           <Link href="/inventory" className="text-primary text-sm">
@@ -77,7 +117,7 @@ const Page = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <tbody>
-                <tr>
+                <tr className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="text-sm text-main pr-4 pt-4">10 May 2024</td>
                   <td className="text-xs font-medium text-secondary text-main pr-4 pt-4">
                     <span className="text-[#166534]">Completed</span> - 37 items
@@ -86,7 +126,7 @@ const Page = () => {
                     -$12,400
                   </td>
                 </tr>
-                <tr>
+                <tr className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                   <td className="text-sm text-main pr-4 pt-4">10 May 2024</td>
                   <td className="text-xs font-medium text-secondary text-main pr-4 pt-4">
                     <span className="text-[#166534]">Completed</span> - 37 items

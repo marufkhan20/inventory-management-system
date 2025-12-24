@@ -4,7 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { Loader2, LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "./Logo";
 
 interface ItemType {
@@ -63,6 +63,10 @@ const Sidebar = ({ open, setOpen }: IProps) => {
       },
     });
   };
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, setOpen]);
   return (
     <div
       className={`fixed ${

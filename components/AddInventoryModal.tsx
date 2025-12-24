@@ -15,9 +15,10 @@ import toast from "react-hot-toast";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  refetch: () => void;
 }
 
-const AddInventoryModal = ({ isOpen, onClose }: ModalProps) => {
+const AddInventoryModal = ({ isOpen, onClose, refetch }: ModalProps) => {
   const {
     register,
     handleSubmit,
@@ -41,6 +42,7 @@ const AddInventoryModal = ({ isOpen, onClose }: ModalProps) => {
     if (result.success) {
       toast.success("Inventory item created successfully.");
       reset();
+      refetch();
       onClose();
     } else {
       toast.error(result.error || "Something went wrong");

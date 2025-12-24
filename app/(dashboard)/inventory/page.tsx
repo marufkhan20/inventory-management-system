@@ -1,6 +1,7 @@
 "use client";
 
 import AddInventoryModal from "@/components/AddInventoryModal";
+import TableSkeleton from "@/components/TableSkeleton";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Inventory } from "@/generated/prisma/client";
@@ -18,13 +19,30 @@ const Page = () => {
   const [totalItems, setTotalItems] = useState(0);
   const pageSize = 5;
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  // Handle Debouncing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+      setCurrentPage(1); // Reset to page 1 on new search
+    }, 300); // Wait 300ms after user stops typing
+
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
   const fetchItems = useCallback(async () => {
     setIsLoading(true);
-    const { data, total } = await getInventoryItems(currentPage, pageSize);
+    const { data, total } = await getInventoryItems(
+      currentPage,
+      pageSize,
+      debouncedQuery
+    );
     setItems(data || []);
     setTotalItems(total || 0);
     setIsLoading(false);
-  }, [currentPage]);
+  }, [currentPage, debouncedQuery]);
 
   useEffect(() => {
     (() => fetchItems())();
@@ -41,6 +59,8 @@ const Page = () => {
         <Input
           className="w-100 text-left text-sm"
           placeholder="Search Items..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <Button
           className="flex items-center gap-1 text-xs font-normal"
@@ -77,7 +97,7 @@ const Page = () => {
               </tr>
             </thead>
             {isLoading ? (
-              <TableSkeleton />
+              <TableSkeleton col={6} />
             ) : items.length > 0 ? (
               <tbody>
                 {items.map((item) => (
@@ -157,40 +177,11 @@ const Page = () => {
 
       <AddInventoryModal
         isOpen={openModal}
-        onClose={() => {
-          setOpenModal(false);
-          fetchItems(); // Refresh list after adding
-        }}
+        onClose={() => setOpenModal(false)}
+        refetch={fetchItems}
       />
     </div>
   );
 };
 
 export default Page;
-
-const TableSkeleton = () => (
-  <tbody className="animate-pulse">
-    {[...Array(5)].map((_, i) => (
-      <tr key={i} className="border-b border-gray-50">
-        <td className="py-4 pr-6">
-          <div className="h-4 bg-gray-200 rounded w-32" />
-        </td>
-        <td className="py-4 pr-6">
-          <div className="h-4 bg-gray-200 rounded w-20" />
-        </td>
-        <td className="py-4 pr-6">
-          <div className="h-4 bg-gray-200 rounded w-12" />
-        </td>
-        <td className="py-4 pr-6">
-          <div className="h-4 bg-gray-200 rounded w-16" />
-        </td>
-        <td className="py-4 pr-6">
-          <div className="h-4 bg-gray-200 rounded w-12" />
-        </td>
-        <td className="py-4">
-          <div className="h-6 bg-gray-200 rounded-full w-12" />
-        </td>
-      </tr>
-    ))}
-  </tbody>
-);
