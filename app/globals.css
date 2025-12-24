@@ -8,6 +8,31 @@ body {
   color: #2563eb;
 }
 
+.text-primary-hover:hover {
+  color: #2563eb;
+}
+
+.text-secondary {
+  color: #6b7280;
+}
+
+.text-main {
+  color: #0f172a;
+}
+
+.text-danger {
+  color: #b91c1c;
+}
+
 .bg-primary {
   background: #2563eb;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #0f172a;
 }

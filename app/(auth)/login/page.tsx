@@ -46,12 +46,7 @@ const Page = () => {
     }
   };
   return (
-    <div
-      className="bg-white shadow-2xl py-10 px-8 rounded-3xl text-center flex flex-col items-center gap-4"
-      style={{
-        width: "450px",
-      }}
-    >
+    <div className="bg-white shadow-2xl py-10 px-8 rounded-3xl text-center flex flex-col items-center gap-4 w-100">
       <div className="mt-4">
         <Logo />
       </div>
