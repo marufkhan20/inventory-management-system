@@ -242,3 +242,37 @@ export async function completeRevision(revisionId: string) {
     return { success: true, error: null };
   });
 }
+
+export async function deleteRevision(revisionId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const revision = await tx.revision.findUnique({
+        where: { id: revisionId },
+      });
+
+      if (!revision) throw new Error("Revision not found");
+
+      // 3. Delete all related RevisionItems first
+      await tx.revisionItem.deleteMany({
+        where: { revisionId: revisionId },
+      });
+
+      // 4. Delete the parent Revision
+      await tx.revision.delete({
+        where: { id: revisionId },
+      });
+    });
+
+    // 5. Refresh the UI
+    revalidatePath("/revisions");
+    revalidatePath("/dashboard");
+
+    return { success: true };
+  } catch (error) {
+    console.error("DELETE_REVISION_ERROR:", error);
+    return { success: false, error: "Failed to delete revision" };
+  }
+}

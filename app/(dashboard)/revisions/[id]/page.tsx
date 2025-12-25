@@ -1,15 +1,17 @@
 "use client";
 
+import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import TableSkeleton from "@/components/TableSkeleton";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { Revision, RevisionItem } from "@/generated/prisma/client";
 import {
   completeRevision,
+  deleteRevision,
   getRevisionById,
   updateRevisionItemCount,
 } from "@/lib/actions/revisions";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -44,6 +46,9 @@ const Page = () => {
   const [updateCount, setUpdateCount] = useState("");
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
 
@@ -144,6 +149,23 @@ const Page = () => {
       setIsCountUpdating(false);
       console.log("error", error);
     }
+  };
+
+  // delete revision
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    if (revisionData) {
+      const res = await deleteRevision(revisionData.id);
+
+      if (res.success) {
+        toast.success(`Revision deleted successfully.`);
+        setIsDeleteModalOpen(false);
+        router.push("/revisions");
+      } else {
+        alert("Error deleting revision");
+      }
+    }
+    setIsDeleting(false);
   };
   return (
     <div>
@@ -291,28 +313,46 @@ const Page = () => {
           </div>
 
           {revisionData?.status === "DRAFT" && (
-            <div className="mt-4 flex items-center gap-4">
-              <Button
-                className="bg-secondary font-normal flex items-center justify-center gap-2"
-                onClick={saveAsDraft}
-                disabled={isSavingDraft}
-              >
-                {isSavingDraft && <Loader2 className="size-4 animate-spin" />}
-                Save as draft
-              </Button>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="mt-4 flex flex-wrap items-center gap-4">
+                <Button
+                  className="bg-secondary font-normal flex items-center justify-center gap-2"
+                  onClick={saveAsDraft}
+                  disabled={isSavingDraft}
+                >
+                  {isSavingDraft && <Loader2 className="size-4 animate-spin" />}
+                  Save as draft
+                </Button>
 
+                <Button
+                  onClick={completeRevisionHandler}
+                  disabled={isCompleting}
+                  className="font-normal flex items-center justify-center gap-2"
+                >
+                  {isCompleting && <Loader2 className="size-4 animate-spin" />}{" "}
+                  Complete revision
+                </Button>
+              </div>
               <Button
-                onClick={completeRevisionHandler}
-                disabled={isCompleting}
-                className="font-normal flex items-center justify-center gap-2"
+                onClick={() => setIsDeleteModalOpen(true)}
+                disabled={isDeleting}
+                className="font-normal bg-[#b91c1c] flex items-center justify-center gap-2"
               >
-                {isCompleting && <Loader2 className="size-4 animate-spin" />}{" "}
-                Complete revision
+                {isDeleting && <Loader2 className="size-4 animate-spin" />}{" "}
+                <Trash2 className="size-4" /> Delete
               </Button>
             </div>
           )}
         </div>
       </div>
+
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        itemName={"Revision"}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

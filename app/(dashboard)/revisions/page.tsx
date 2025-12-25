@@ -71,6 +71,7 @@ const Page = () => {
       const result = await createNewRevision();
       if (result.success) {
         setIsCreating(false);
+        router.push(`/revisions/${result.id}`);
         await fetchItems();
         toast.success("Revision created successfully.");
       } else {
