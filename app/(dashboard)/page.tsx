@@ -1,14 +1,29 @@
 "use client";
 
 import TableSkeleton from "@/components/TableSkeleton";
-import { Inventory } from "@/generated/prisma/client";
+import { Inventory, RevisionStatus } from "@/generated/prisma/client";
 import { getInventoryItems } from "@/lib/actions/inventory";
+import { getAllRevisions } from "@/lib/actions/revisions";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+
+type RevisionSummary = {
+  id: string;
+  date: Date;
+  status: RevisionStatus;
+  totalLoss: number;
+  itemsCounted: number;
+};
 
 const Page = () => {
   const [items, setItems] = useState<Inventory[]>([]);
+  const [revisionsData, setRevisionsData] = useState<RevisionSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRevisionsLoading, setIsRevisionsLoading] = useState(true);
+
+  const router = useRouter();
+
   const pageSize = 4;
 
   const fetchItems = useCallback(async () => {
@@ -21,6 +36,22 @@ const Page = () => {
   useEffect(() => {
     (() => fetchItems())();
   }, [fetchItems]);
+
+  // get recent revisions
+  const fetchRecentRevisions = useCallback(async () => {
+    setIsRevisionsLoading(true);
+    const { data } = await getAllRevisions({
+      page: 1,
+      limit: 5,
+      search: "",
+    });
+    setRevisionsData(data || []);
+    setIsRevisionsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    (() => fetchRecentRevisions())();
+  }, [fetchRecentRevisions]);
   return (
     <div>
       <div className="flex gap-6 flex-wrap">
@@ -112,30 +143,65 @@ const Page = () => {
           </Link>
         </div>
 
-        <div className="bg-white p-4 rounded-2xl shadow-xl flex flex-col gap-6 h-fit">
+        <div className="bg-white p-4 rounded-2xl shadow-xl flex flex-col h-fit">
           <h2 className="font-normal">Recent Revisions</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
-              <tbody>
-                <tr className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                  <td className="text-sm text-main pr-4 pt-4">10 May 2024</td>
-                  <td className="text-xs font-medium text-secondary text-main pr-4 pt-4">
-                    <span className="text-[#166534]">Completed</span> - 37 items
-                  </td>
-                  <td className="text-xs font-medium text-danger pr-4 pt-4">
-                    -$12,400
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                  <td className="text-sm text-main pr-4 pt-4">10 May 2024</td>
-                  <td className="text-xs font-medium text-secondary text-main pr-4 pt-4">
-                    <span className="text-[#166534]">Completed</span> - 37 items
-                  </td>
-                  <td className="text-xs font-medium text-danger pr-4 pt-4">
-                    -$12,400
-                  </td>
-                </tr>
-              </tbody>
+              {isRevisionsLoading ? (
+                <TableSkeleton col={3} />
+              ) : revisionsData.length > 0 ? (
+                <tbody>
+                  {revisionsData.map((item) => (
+                    <tr
+                      key={item.id}
+                      className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                      onClick={() => router.push(`/revisions/${item.id}`)}
+                    >
+                      <td className="text-sm text-main pr-6 py-4">
+                        {new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }).format(new Date(item.date))}
+                      </td>
+                      <td className="text-xs text-main py-5 pr-6 flex items-center font-medium gap-1">
+                        <span
+                          className={
+                            item.status === "COMPLETED"
+                              ? "text-green-700"
+                              : "text-[#6B7280]"
+                          }
+                        >
+                          {item.status}
+                        </span>
+                        - {item.itemsCounted} items
+                      </td>
+                      <td
+                        className={`${
+                          item.status === "COMPLETED" && item.totalLoss > 0
+                            ? "text-[#b91c1c]"
+                            : "text-main"
+                        } text-xs py-4`}
+                      >
+                        {item.totalLoss > 0
+                          ? `-$${item.totalLoss}`
+                          : `$${item.totalLoss}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ) : (
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="text-center py-10 text-secondary text-sm"
+                    >
+                      No revisions found. Add your first revision!
+                    </td>
+                  </tr>
+                </tbody>
+              )}
             </table>
           </div>
         </div>

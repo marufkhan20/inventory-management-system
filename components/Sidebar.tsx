@@ -54,7 +54,7 @@ const Sidebar = ({ open, setOpen }: IProps) => {
   );
 
   // 2. Get all other items
-  const otherItems = items.filter((item) => item.link !== pathname);
+  const otherItems = items.filter((item) => item.link !== `/${pathname}`);
 
   // Logout Handler
   const handleLogout = async () => {
