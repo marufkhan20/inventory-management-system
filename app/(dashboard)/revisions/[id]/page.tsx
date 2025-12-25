@@ -280,10 +280,12 @@ const Page = () => {
                           difference < 0 ? "text-danger" : "text-main"
                         } pr-6 py-4`}
                       >
-                        {difference}
+                        {difference.toFixed(2)}
                       </td>
                       <td className="text-sm text-main py-4  flex justify-end pr-4">
-                        {lossValue > 0 ? `-₸${lossValue}` : `₸${lossValue}`}
+                        {lossValue > 0
+                          ? `-₸${lossValue.toFixed(2)}`
+                          : `₸${lossValue.toFixed(2)}`}
                       </td>
                     </tr>
                   );

@@ -162,13 +162,13 @@ const Page = () => {
                       {item.category}
                     </td>
                     <td className="text-sm text-main pr-6 py-4">
-                      {item.inStock}
+                      {item.inStock.toFixed(2)}
                     </td>
                     <td className="text-sm text-main pr-6 py-4">
                       ₸{item.purchasePrice}
                     </td>
                     <td className="text-sm text-main pr-6 py-4">
-                      {item.minStock}
+                      {item.minStock.toFixed(2)}
                     </td>
                     <td className="text-sm text-main py-4  flex justify-end">
                       <span

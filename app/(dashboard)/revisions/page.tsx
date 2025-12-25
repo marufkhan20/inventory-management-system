@@ -150,8 +150,8 @@ const Page = () => {
                       } "text-sm pr-6 py-4"`}
                     >
                       {item.totalLoss > 0
-                        ? `-₸${item.totalLoss}`
-                        : `₸${item.totalLoss}`}
+                        ? `-₸${item.totalLoss.toFixed(2)}`
+                        : `₸${item.totalLoss.toFixed(2)}`}
                     </td>
                     <td className="text-sm text-main py-4  flex justify-end">
                       <span

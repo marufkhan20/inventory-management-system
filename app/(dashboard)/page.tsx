@@ -43,7 +43,7 @@ const Page = () => {
     const { data } = await getAllRevisions({
       page: 1,
       limit: 5,
-      search: "",
+      search: "completed",
     });
     setRevisionsData(data || []);
     setIsRevisionsLoading(false);
@@ -184,8 +184,8 @@ const Page = () => {
                         } text-xs py-4`}
                       >
                         {item.totalLoss > 0
-                          ? `-₸${item.totalLoss}`
-                          : `₸${item.totalLoss}`}
+                          ? `-₸${item.totalLoss.toFixed(2)}`
+                          : `₸${item.totalLoss.toFixed(2)}`}
                       </td>
                     </tr>
                   ))}
