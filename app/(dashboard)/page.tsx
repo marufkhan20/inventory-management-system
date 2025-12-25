@@ -59,7 +59,7 @@ const Page = () => {
           <h4 className="text-xs uppercase font-semibold text-secondary">
             TOTAL REVENUE
           </h4>
-          <h2 className="text-xl font-semibold">$84,500</h2>
+          <h2 className="text-xl font-semibold">₸84,500</h2>
           <p className="text-xs text-secondary font-medium">
             vs last 7 days: <span className="text-[#16A34A]">+12%</span>
           </p>
@@ -68,7 +68,7 @@ const Page = () => {
           <h4 className="text-xs uppercase font-semibold text-secondary">
             TOTAL COST
           </h4>
-          <h2 className="text-xl font-semibold">$43,000</h2>
+          <h2 className="text-xl font-semibold">₸43,000</h2>
           <p className="text-xs text-secondary font-medium">
             vs last 7 days: <span className="text-[#16A34A]">-3%</span>
           </p>
@@ -77,7 +77,7 @@ const Page = () => {
           <h4 className="text-xs uppercase font-semibold text-secondary">
             GROSS PROFIT
           </h4>
-          <h2 className="text-xl font-semibold">$49,450</h2>
+          <h2 className="text-xl font-semibold">₸49,450</h2>
           <p className="text-xs text-secondary font-medium">
             Margin: <span className="text-[#16A34A]">61%</span>
           </p>
@@ -184,8 +184,8 @@ const Page = () => {
                         } text-xs py-4`}
                       >
                         {item.totalLoss > 0
-                          ? `-$${item.totalLoss}`
-                          : `$${item.totalLoss}`}
+                          ? `-₸${item.totalLoss}`
+                          : `₸${item.totalLoss}`}
                       </td>
                     </tr>
                   ))}

@@ -189,7 +189,7 @@ const Page = () => {
             {revisionData?.status}
           </span>{" "}
           Total loss:{" "}
-          <span className="text-danger">-${currentTotalLoss.toFixed(2)}</span>
+          <span className="text-danger">-₸{currentTotalLoss.toFixed(2)}</span>
         </p>
       </div>
 
@@ -283,7 +283,7 @@ const Page = () => {
                         {difference}
                       </td>
                       <td className="text-sm text-main py-4  flex justify-end pr-4">
-                        {lossValue > 0 ? `-$${lossValue}` : `$${lossValue}`}
+                        {lossValue > 0 ? `-₸${lossValue}` : `₸${lossValue}`}
                       </td>
                     </tr>
                   );
@@ -308,7 +308,7 @@ const Page = () => {
               Total loss:
             </p>
             <p className="text-sm text-danger py-4  flex justify-end pr-4">
-              -${currentTotalLoss.toFixed(2)}
+              -₸{currentTotalLoss.toFixed(2)}
             </p>
           </div>
 

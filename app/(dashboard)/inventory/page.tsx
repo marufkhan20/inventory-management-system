@@ -165,7 +165,7 @@ const Page = () => {
                       {item.inStock}
                     </td>
                     <td className="text-sm text-main pr-6 py-4">
-                      {item.purchasePrice}
+                      ₸{item.purchasePrice}
                     </td>
                     <td className="text-sm text-main pr-6 py-4">
                       {item.minStock}
