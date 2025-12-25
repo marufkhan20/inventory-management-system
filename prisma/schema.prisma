@@ -77,8 +77,8 @@ model Inventory {
   id            String @id @default(cuid())
   name          String
   category      String
-  inStock       Int    @default(0)
-  minStock      Int    @default(10)
+  inStock       Float  @default(0)
+  minStock      Float  @default(10)
   purchasePrice String
   status        String
 

@@ -136,7 +136,7 @@ export async function createNewRevision() {
 
 export async function updateRevisionItemCount(
   itemId: string,
-  newCount: number
+  newCount: string
 ) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) return { error: "Unauthorized" };
@@ -146,7 +146,7 @@ export async function updateRevisionItemCount(
       // 1. Update the specific item
       const updatedItem = await tx.revisionItem.update({
         where: { id: itemId },
-        data: { countedQuantity: newCount },
+        data: { countedQuantity: parseFloat(newCount) },
         include: { revision: true },
       });
 

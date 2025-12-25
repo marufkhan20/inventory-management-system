@@ -41,7 +41,7 @@ const Page = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCountUpdating, setIsCountUpdating] = useState(false);
   const [updateCountId, setUpdateCountId] = useState<null | string>(null);
-  const [updateCount, setUpdateCount] = useState(0);
+  const [updateCount, setUpdateCount] = useState("");
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
 
@@ -77,7 +77,7 @@ const Page = () => {
           revisionData &&
           revisionData.items.map((item) => {
             if (item.id === updateCountId) {
-              return { ...item, countedQuantity: updateCount }; // Return a new object
+              return { ...item, countedQuantity: parseFloat(updateCount) }; // Return a new object
             }
             return item;
           });
@@ -89,7 +89,7 @@ const Page = () => {
           });
         }
 
-        setUpdateCount(0);
+        setUpdateCount("");
         setUpdateCountId("");
 
         toast.success("Count updated successfully.");
@@ -221,7 +221,9 @@ const Page = () => {
                           revisionData?.status === "DRAFT"
                             ? () => {
                                 setUpdateCountId(item.id);
-                                setUpdateCount(item?.countedQuantity || 0);
+                                setUpdateCount(
+                                  String(item?.countedQuantity) || ""
+                                );
                               }
                             : () => {}
                         }
@@ -232,9 +234,8 @@ const Page = () => {
                             {/* Wrapper to position the spinner */}
                             <Input
                               value={updateCount}
-                              onChange={(e) =>
-                                setUpdateCount(Number(e.target.value))
-                              }
+                              onChange={(e) => setUpdateCount(e.target.value)}
+                              type="text"
                               onBlur={udpateRevisionCount}
                               className={`w-full p-1 px-3 ${
                                 isCountUpdating ? "pr-8 opacity-70" : ""

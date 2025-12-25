@@ -148,7 +148,7 @@ const AddInventoryModal = ({
               </label>
               <Input
                 {...register("inStock")}
-                type="number"
+                type="text"
                 placeholder="0"
                 className="w-full text-left py-3"
               />
@@ -177,7 +177,7 @@ const AddInventoryModal = ({
               </label>
               <Input
                 {...register("minStock")}
-                type="number"
+                type="text"
                 placeholder="10"
                 className="w-full text-left py-3"
               />

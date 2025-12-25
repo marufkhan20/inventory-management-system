@@ -74,15 +74,17 @@ export async function createInventoryItem(values: InventoryInput) {
 
   const { name, category, inStock, price, minStock } = validatedFields.data;
 
+  console.log("instock", inStock);
+
   try {
     await prisma.inventory.create({
       data: {
         userId,
         name,
         category,
-        inStock,
+        inStock: parseFloat(inStock),
         purchasePrice: price,
-        minStock,
+        minStock: parseFloat(minStock),
         status: inStock <= minStock ? "Low" : "OK",
       },
     });
@@ -114,9 +116,9 @@ export async function updateInventoryItem(id: string, values: InventoryInput) {
       data: {
         name,
         category,
-        inStock,
+        inStock: parseFloat(inStock),
         purchasePrice: price,
-        minStock,
+        minStock: parseFloat(minStock),
         status: inStock <= minStock ? "Low" : "OK",
       },
     });
