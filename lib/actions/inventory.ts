@@ -47,6 +47,7 @@ export async function getInventoryItems(
 
     return { data: items, total };
   } catch (error) {
+    console.error("Error getting inventories", error);
     return { error: "Failed to fetch items", data: [], total: 0 };
   }
 }
@@ -74,7 +75,7 @@ export async function createInventoryItem(values: InventoryInput) {
   const { name, category, inStock, price, minStock } = validatedFields.data;
 
   try {
-    const newItem = await prisma.inventory.create({
+    await prisma.inventory.create({
       data: {
         userId,
         name,
@@ -86,11 +87,10 @@ export async function createInventoryItem(values: InventoryInput) {
       },
     });
 
-    console.log("new Item", newItem);
-
     revalidatePath("/inventory"); // Refresh the table
     return { success: true };
   } catch (error) {
+    console.error("error of creating inventory", error);
     return { error: "Something went wrong in the database." };
   }
 }
@@ -140,6 +140,7 @@ export async function deleteInventoryItem(id: string) {
     revalidatePath("/inventory");
     return { success: true, item: deletedItem };
   } catch (error) {
+    console.error("error deleting inventory", error);
     return { error: "Failed to delete item" };
   }
 }

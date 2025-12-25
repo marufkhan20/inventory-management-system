@@ -19,6 +19,7 @@ model User {
   accounts      Account[]
 
   inventoryItems Inventory[]
+  revisions      Revision[]
 
   @@unique([email])
   @@map("user")
@@ -89,4 +90,33 @@ model Inventory {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Revision {
+  id           String         @id @default(cuid())
+  userId       String
+  date         DateTime       @default(now())
+  status       RevisionStatus @default(DRAFT) // DRAFT or COMPLETED
+  totalLoss    Float          @default(0)
+  itemsCounted Int            @default(0)
+  items        RevisionItem[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model RevisionItem {
+  id               String @id @default(cuid())
+  revisionId       String
+  inventoryId      String // Link to original item
+  itemName         String // Snapshot of name
+  expectedQuantity Float
+  countedQuantity  Float?
+  costPrice        Float // Snapshot of price at that moment
+
+  revision Revision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+}
+
+enum RevisionStatus {
+  DRAFT
+  COMPLETED
 }

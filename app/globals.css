@@ -24,8 +24,16 @@ body {
   color: #b91c1c;
 }
 
+.text-green {
+  color: #166534;
+}
+
 .bg-primary {
   background: #2563eb;
+}
+
+.bg-secondary {
+  background: #6b7280;
 }
 
 .bg-green {

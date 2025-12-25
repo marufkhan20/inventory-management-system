@@ -42,11 +42,16 @@ interface IProps {
 
 const Sidebar = ({ open, setOpen }: IProps) => {
   const [isLogout, setIsLogout] = useState(false);
-  const pathname = usePathname();
+  let pathname = usePathname();
+  pathname = pathname.split("/")[1];
   const router = useRouter();
 
+  console.log("pathname", pathname);
+
   // 1. Find the active item (might be undefined if no match)
-  const activeItem = items.find((item: ItemType) => item.link === pathname);
+  const activeItem = items.find(
+    (item: ItemType) => item.link === `/${pathname}`
+  );
 
   // 2. Get all other items
   const otherItems = items.filter((item) => item.link !== pathname);

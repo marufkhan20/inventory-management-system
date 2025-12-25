@@ -13,7 +13,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   const [openSidebar, setOpenSidebar] = useState(true);
-  const rawPath = usePathname().replace("/", "");
+  let rawPath = usePathname().replace("/", "");
+  rawPath = rawPath.split("/")[0];
 
   const pageName = rawPath
     ? rawPath.charAt(0).toUpperCase() + rawPath.slice(1)
