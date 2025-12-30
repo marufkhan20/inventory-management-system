@@ -298,7 +298,7 @@ const Page = () => {
                     colSpan={6}
                     className="text-center py-10 text-secondary text-sm"
                   >
-                    No revisions found. Add your first revision!
+                    No revision details found. Please check your revision ID.
                   </td>
                 </tr>
               </tbody>
