@@ -193,10 +193,10 @@ const Page = () => {
         </p>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl shadow-xl flex flex-col gap-6 mt-6">
+      <div className="bg-white p-4 w-full rounded-2xl shadow-xl flex flex-col gap-6 mt-6">
         <h2 className="font-normal">Items in revision</h2>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="text-left border-collapse">
             <thead>
               <tr className="border-b border-gray-50">
                 <th className="text-xs font-medium tracking-wider text-secondary pr-6 w-full pb-4">
@@ -280,11 +280,11 @@ const Page = () => {
                           difference < 0 ? "text-danger" : "text-main"
                         } pr-6 py-4`}
                       >
-                        {difference.toFixed(2)}
+                        {difference < 0 ? difference.toFixed(2) : difference === 0 ? "0" : `+${difference.toFixed(2)}`}
                       </td>
                       <td className="text-sm text-main py-4  flex justify-end pr-4">
                         {lossValue > 0
-                          ? `-₸${lossValue.toFixed(2)}`
+                          ? `-₸${lossValue.toFixed(2)}` 
                           : `₸${lossValue.toFixed(2)}`}
                       </td>
                     </tr>
@@ -304,6 +304,7 @@ const Page = () => {
               </tbody>
             )}
           </table>
+        </div>
 
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm text-main py-4  flex justify-end pr-4">
@@ -345,7 +346,6 @@ const Page = () => {
               </Button>
             </div>
           )}
-        </div>
       </div>
 
       <DeleteConfirmationModal

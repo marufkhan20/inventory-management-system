@@ -82,10 +82,10 @@ export async function createInventoryItem(values: InventoryInput) {
         userId,
         name,
         category,
-        inStock: parseFloat(inStock),
-        purchasePrice: price,
-        minStock: parseFloat(minStock),
-        status: parseFloat(inStock) <= parseFloat(minStock) ? "Low" : "OK",
+        inStock: inStock,
+        purchasePrice: String(price),
+        minStock: minStock,
+        status: inStock <= minStock ? "Low" : "OK",
       },
     });
 
@@ -116,10 +116,10 @@ export async function updateInventoryItem(id: string, values: InventoryInput) {
       data: {
         name,
         category,
-        inStock: parseFloat(inStock),
-        purchasePrice: price,
-        minStock: parseFloat(minStock),
-        status: parseFloat(inStock) <= parseFloat(minStock) ? "Low" : "OK",
+        inStock: inStock,
+        purchasePrice: String(price),
+        minStock: minStock,
+        status: inStock <= minStock ? "Low" : "OK",
       },
     });
     revalidatePath("/inventory");

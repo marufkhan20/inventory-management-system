@@ -44,7 +44,7 @@ const AddInventoryModal = ({
       minStock: 0,
       category: "",
       name: "",
-      price: "",
+      price: 0,
     },
   });
 
@@ -56,7 +56,7 @@ const AddInventoryModal = ({
         category: initialData.category,
         inStock: initialData.inStock,
         minStock: initialData.minStock,
-        price: initialData.purchasePrice,
+        price: Number(initialData.purchasePrice) || 0,
       });
     } else if (!isOpen) {
       reset({
@@ -64,7 +64,7 @@ const AddInventoryModal = ({
         minStock: 0,
         category: "",
         name: "",
-        price: "",
+        price: 0,
       });
     }
   }, [initialData, isOpen, reset]);
