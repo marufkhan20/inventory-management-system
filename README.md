@@ -8,7 +8,7 @@ A professional inventory management and audit (revision) system designed for bar
 * **Language:** TypeScript
 * **Database:** [PostgreSQL](https://www.postgresql.org/) (Hosted on **Neon**)
 * **ORM:** [Prisma](https://www.prisma.io/)
-* **Styling:** Tailwind CSS + Shadcn/UI
+* **Styling:** Tailwind CSS
 * **Deployment:** Vercel
 
 ---
@@ -82,7 +82,7 @@ Whenever you modify `prisma/schema.prisma`:
 
 1. Push your code to **GitHub**.
 2. Import the repository into **Vercel**.
-3. Add the `DATABASE_URL` to the **Environment Variables** in the Vercel Project Settings.
+3. Add the `DATABASE_URL` `BETTER_AUTH_SECRET` `BETTER_AUTH_URL` to the **Environment Variables** in the Vercel Project Settings.
 
 ### Updating the Live App
 
