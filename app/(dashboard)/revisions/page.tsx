@@ -114,7 +114,7 @@ const Page = () => {
                 <th className="text-xs font-medium tracking-wider text-secondary pr-6 whitespace-nowrap pb-4">
                   Items counted
                 </th>
-                <th className="text-xs font-medium tracking-wider text-secondary pr-6 whitespace-nowrap pb-4">
+                <th className="text-xs font-medium tracking-widertext-secondary pr-6 whitespace-nowrap pb-4">
                   Total loss
                 </th>
                 <th className="text-xs font-medium tracking-wider text-secondary pr-6 whitespace-nowrap pb-4">
@@ -147,7 +147,7 @@ const Page = () => {
                         item.status === "COMPLETED" && item.totalLoss > 0
                           ? "text-[#b91c1c]"
                           : "text-main"
-                      } "text-sm pr-6 py-4"`}
+                      } text-sm pr-6 py-4 whitespace-nowrap`}
                     >
                       {item.totalLoss > 0
                         ? `-₸${item.totalLoss.toFixed(2)}`
