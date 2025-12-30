@@ -119,7 +119,7 @@ export async function createNewRevision() {
             inventoryId: item.id,
             itemName: item.name,
             expectedQuantity: item.inStock,
-            costPrice: parseFloat(item.purchasePrice), // Store current price
+            costPrice: item.purchasePrice, // Store current price
             countedQuantity: item.inStock, // Default counted to expected for easier UX
           })),
         },
