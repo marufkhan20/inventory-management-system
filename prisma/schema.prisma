@@ -79,7 +79,7 @@ model Inventory {
   category      String
   inStock       Float  @default(0)
   minStock      Float  @default(10)
-  purchasePrice String
+  purchasePrice Float @default(0)
   status        String
 
   // Relation to User
