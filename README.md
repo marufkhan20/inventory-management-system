@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍸 Bar Inventory & Revision System
 
-## Getting Started
+A professional inventory management and audit (revision) system designed for bars. Track stock levels, manage audit losses, and monitor inventory health in real-time.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+* **Framework:** [Next.js 15+](https://nextjs.org/) (App Router)
+* **Language:** TypeScript
+* **Database:** [PostgreSQL](https://www.postgresql.org/) (Hosted on **Neon**)
+* **ORM:** [Prisma](https://www.prisma.io/)
+* **Styling:** Tailwind CSS + Shadcn/UI
+* **Deployment:** Vercel
+
+---
+
+## 💻 Getting Started Locally
+
+### 1. Prerequisites
+
+Ensure you have **Node.js** and **npm** installed.
+
+### 2. Installation
+
+```bash
+git clone <your-repo-url>
+cd <your-project-name>
+npm install
+
+```
+
+### 3. Environment Variables
+
+Create a `.env` file in the root directory and add your Neon connection string:
+
+```env
+# Neon Connection String (Direct or Pooled)
+DATABASE_URL=YOUR_DATABASE_URL
+
+# Authentication (Better Auth)
+BETTER_AUTH_SECRET=YOUR_SECRET_KEY
+BETTER_AUTH_URL=http://localhost:3000
+
+```
+
+### 4. Database Setup (Migrations)
+
+Sync your local environment with the Neon database schema:
+
+```bash
+# Generate the Prisma Client
+npx prisma generate
+
+# Apply migrations to your Neon DB
+npx prisma migrate dev
+
+```
+
+### 5. Run the Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗄️ Database Workflow (Prisma + Neon)
 
-## Learn More
+Whenever you modify `prisma/schema.prisma`:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Sync Changes:** Run `npx prisma migrate dev --name <description>` to update the Neon database.
+2. **Generate Client:** Run `npx prisma generate` to update the TypeScript types for your database.
+3. **Reset (If needed):** If your schema drifts from Neon, use `npx prisma migrate reset` (Warning: This wipes all data).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚢 Deployment (Vercel)
 
-## Deploy on Vercel
+### Initial Setup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your code to **GitHub**.
+2. Import the repository into **Vercel**.
+3. Add the `DATABASE_URL` to the **Environment Variables** in the Vercel Project Settings.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Updating the Live App
+
+Vercel will automatically deploy every time you push to the `main` branch.
+
+**Important:** If your update includes a database change, ensure you run your migrations before or during deployment.
+
+* You can add `npx prisma generate && npx prisma migrate deploy` to your **Build Command** in Vercel to automate this.
+
+---
+
+## 🛠️ Project Features
+
+* **Dynamic Dashboard:** Real-time recent revisions and inventory status.
+* **Live Audits:** Automatic loss calculation and draft-saving logic.
+* **Inventory Sync:** "Complete Revision" logic that updates stock levels and "Low Stock" alerts.
+* **Mobile Friendly:** Responsive UI for bartenders taking stock on the floor.
